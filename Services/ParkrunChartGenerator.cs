@@ -8,7 +8,7 @@ namespace ParkrunScraper.Services;
 
 public class ParkrunChartGenerator
 {
-    public static byte[]? GenerateWeeklyTrendChart(List<WeeklyClubSnapshot> history, int width = 520, int height = 115)
+    public static byte[]? GenerateWeeklyTrendChart(List<WeeklyClubSnapshot> history, int width = 520, int height = 170)
     {
         if (history == null || history.Count < 2)
         {
@@ -30,31 +30,53 @@ public class ParkrunChartGenerator
             // Line 1: Runners
             var runnerLine = plot.Add.Scatter(xs, runnerCounts);
             runnerLine.Color = Color.FromHex("#283593"); // Deep Indigo
-            runnerLine.LineWidth = 2.2f;
-            runnerLine.MarkerSize = 6;
+            runnerLine.LineWidth = 2.4f;
+            runnerLine.MarkerSize = 6.5f;
             runnerLine.LegendText = "Runners";
 
             // Line 2: Events
             var eventLine = plot.Add.Scatter(xs, eventCounts);
             eventLine.Color = Color.FromHex("#00796B"); // Deep Teal
-            eventLine.LineWidth = 2.2f;
-            eventLine.MarkerSize = 6;
+            eventLine.LineWidth = 2.4f;
+            eventLine.MarkerSize = 6.5f;
             eventLine.LegendText = "Events";
+
+            // Calculate range and generous headroom so numbers never touch or clip the top border
+            double maxVal = Math.Max(runnerCounts.Max(), eventCounts.Max());
+            double minVal = Math.Min(runnerCounts.Min(), eventCounts.Min());
+            double ySpan = Math.Max(12, maxVal - minVal);
+
+            // Generous headroom rounded up to clean multiple
+            double rawMaxY = maxVal + Math.Max(12, ySpan * 0.35);
+            double maxY = Math.Ceiling(rawMaxY / 5.0) * 5.0;
+            if (maxY - maxVal < 10) maxY += 5;
+
+            double rawMinY = Math.Max(0, minVal - Math.Max(4, ySpan * 0.15));
+            double minY = Math.Floor(rawMinY / 5.0) * 5.0;
 
             // Add value markers on data points
             for (int i = 0; i < history.Count; i++)
             {
-                var rText = plot.Add.Text($"{history[i].TotalRunners}", xs[i], runnerCounts[i] + 1.2);
+                double rVal = runnerCounts[i];
+                double eVal = eventCounts[i];
+                double labelOffset = Math.Max(0.8, ySpan * 0.035);
+
+                var rText = plot.Add.Text($"{history[i].TotalRunners}", xs[i], rVal + labelOffset);
                 rText.LabelFontColor = Color.FromHex("#283593");
                 rText.LabelBold = true;
-                rText.LabelFontSize = 8;
+                rText.LabelFontSize = 8.5f;
                 rText.LabelAlignment = Alignment.LowerCenter;
 
-                var eText = plot.Add.Text($"{history[i].DistinctEvents}", xs[i], eventCounts[i] + 1.2);
+                // If runner and event counts are very close, position event label below to prevent collision
+                bool tooClose = Math.Abs(rVal - eVal) < 3.0;
+                double eY = tooClose ? (eVal - labelOffset) : (eVal + labelOffset);
+                var eAlign = tooClose ? Alignment.UpperCenter : Alignment.LowerCenter;
+
+                var eText = plot.Add.Text($"{history[i].DistinctEvents}", xs[i], eY);
                 eText.LabelFontColor = Color.FromHex("#00796B");
                 eText.LabelBold = true;
-                eText.LabelFontSize = 8;
-                eText.LabelAlignment = Alignment.LowerCenter;
+                eText.LabelFontSize = 8.5f;
+                eText.LabelAlignment = eAlign;
             }
 
             // Format X Axis ticks
@@ -75,9 +97,7 @@ public class ParkrunChartGenerator
             plot.Axes.Left.TickLabelStyle.FontSize = 7.5f;
             plot.Axes.Left.TickLabelStyle.ForeColor = Color.FromHex("#757575");
 
-            // Expand Y limits slightly so numbers don't clip
-            double maxY = Math.Max(runnerCounts.Max(), eventCounts.Max()) + 5;
-            double minY = Math.Max(0, Math.Min(runnerCounts.Min(), eventCounts.Min()) - 4);
+            // Expand Y limits with generous top headroom
             plot.Axes.SetLimitsY(minY, maxY);
             plot.Axes.SetLimitsX(-0.5, history.Count - 0.5);
 

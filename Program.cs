@@ -140,6 +140,18 @@ class Program
             int milestoneHolders = volunteerProfiles.Count(v => !string.IsNullOrEmpty(v.HighestMilestone) && v.HighestMilestone != "-");
             Console.WriteLine($"Volunteering (This Week):        {activeVolunteers} members volunteered ({totalVolCredits:N0} combined lifetime credits, {milestoneHolders} milestone achievers)\n");
 
+            // Track and detect weekly club milestones
+            Console.WriteLine("Analyzing runner and volunteer milestones for this weekend...");
+            var milestoneService = new ParkrunMilestoneService();
+            var milestones = await milestoneService.ProcessAndTrackMilestonesAsync(
+                meta,
+                records,
+                effectiveClubName,
+                effectiveDate,
+                volunteerProfiles);
+
+            Console.WriteLine($"Milestones Achieved This Week:   {milestones.Count} members reached a milestone\n");
+
             string destinationPdf;
             if (!string.IsNullOrEmpty(customOutput))
             {
@@ -161,8 +173,53 @@ class Program
                 }
             }
 
-            // Generate PDF Report with weekly volunteers section and trend chart
-            ParkrunPdfGenerator.GeneratePdf(meta, records, destinationPdf, trendChartBytes, volunteerProfiles);
+            // Generate PDF Report with weekly milestones section, volunteers section and trend chart
+            ParkrunPdfGenerator.GeneratePdf(meta, records, destinationPdf, trendChartBytes, volunteerProfiles, milestones);
+
+            if (milestones.Count > 0)
+            {
+                Console.WriteLine("\nClub Milestones Achieved This Week:");
+                Console.WriteLine(new string('-', 95));
+                Console.WriteLine($"{"Parkrunner",-26} | {"Milestone",-18} | {"Event",-32} | {"Details",-14}");
+                Console.WriteLine(new string('-', 95));
+                foreach (var m in milestones)
+                {
+                    string cleanEv = m.EventName.Replace(" parkrun", "", StringComparison.OrdinalIgnoreCase).Trim();
+                    string details = !string.IsNullOrEmpty(m.Achievement) ? $"{m.FinishTime} ({m.Achievement})" : m.FinishTime;
+                    Console.WriteLine($"{m.ParkrunnerName,-26} | {m.MilestoneTitle,-18} | {cleanEv,-32} | {details,-14}");
+                }
+                Console.WriteLine(new string('-', 95));
+            }
+
+            var pbs = records.Where(r => r.IsPb).ToList();
+            if (pbs.Count > 0)
+            {
+                Console.WriteLine($"\nPersonal Bests (PBs) This Week ({pbs.Count}):");
+                Console.WriteLine(new string('-', 95));
+                Console.WriteLine($"{"Parkrunner",-26} | {"Time",-12} | {"Event",-35}");
+                Console.WriteLine(new string('-', 95));
+                foreach (var p in pbs)
+                {
+                    string cleanEv = p.EventName.Replace(" parkrun", "", StringComparison.OrdinalIgnoreCase).Trim();
+                    Console.WriteLine($"{p.Parkrunner,-26} | {p.Time,-12} | {cleanEv,-35}");
+                }
+                Console.WriteLine(new string('-', 95));
+            }
+
+            var firstTimers = records.Where(r => r.IsFirstTimer).ToList();
+            if (firstTimers.Count > 0)
+            {
+                Console.WriteLine($"\nFirst-Time Event Visits This Week ({firstTimers.Count}):");
+                Console.WriteLine(new string('-', 95));
+                Console.WriteLine($"{"Parkrunner",-26} | {"Total Runs",-12} | {"Event Visited",-35}");
+                Console.WriteLine(new string('-', 95));
+                foreach (var ft in firstTimers)
+                {
+                    string cleanEv = ft.EventName.Replace(" parkrun", "", StringComparison.OrdinalIgnoreCase).Trim();
+                    Console.WriteLine($"{ft.Parkrunner,-26} | {ft.TotalRuns,-12} | {cleanEv,-35}");
+                }
+                Console.WriteLine(new string('-', 95));
+            }
 
             if (records.Count > 0)
             {

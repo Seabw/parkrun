@@ -6,17 +6,22 @@ A C# .NET 9 console application that scrapes and extracts **Parkrun Consolidated
 
 ## Features
 
+- **Weekly Club Milestones Tracking**:
+  - Automatically identifies member running milestones (official 25, 50, 100, 250, 500, 1000 clubs, junior 10 club, and celebrated club milestones like 150th, 200th, 300th, etc.) and volunteer credit milestones.
+  - Prominently showcases milestone achievers at the start of the report with celebratory cards highlighting their milestone tier, event, finish time, and PB badges.
+  - Highlights milestone pills directly beside member names in the results table.
+  - Persists all club milestone achievements historically in `data/milestones.json`.
 - **Weekly Trend Tracking & Graphing**:
   - Automatically records historical weekly stats in `data/history.json`.
-  - Dynamically renders an embedded multi-week participation and attendance trend chart using `ScottPlot`.
+  - Dynamically renders an embedded multi-week participation and attendance trend chart using `ScottPlot` with ample vertical height (170pt) and generous top headroom to ensure all data labels are clear and never touch the top border.
 - **Weekly Club Volunteers & Event Rosters**:
   - Automatically scrapes event-level volunteer rosters across all attended parkruns to capture both running and non-running volunteers (e.g. Run Directors, Marshals, Timekeepers).
   - Displays exclusively the active volunteers for that specific weekend.
   - Details their assigned role(s) that week, event attended, official milestone badges (`V25`, `V50`, `V100`, `V250`), and lifetime volunteer credits.
   - Caches profiles in `data/volunteers.json` for fast, rate-limit-resilient generation.
 - **Clean 2-Page Standard Report**:
-  - **Page 1**: Club Runners Table with enlarged typography (13pt headers, 13pt pos, 13pt runner, 13pt time, 15pt finishers, 11.5pt event). Interactive hyperlinks on runner names.
-  - **Page 2**: Weekly Trends Graph, Weekly Volunteers Table (13pt/15pt typography), and Celebrating Our Volunteers appreciation banner (13pt).
+  - **Page 1**: Weekly Milestones Section (when milestones occur), followed by Club Runners Table with enlarged typography (13pt headers, 13pt pos, 13pt runner, 13pt time, 15pt finishers, 11.5pt event) and milestone badges. Interactive hyperlinks on runner names.
+  - **Page 2**: Taller Weekly Trends Graph, Weekly Volunteers Table (13pt/15pt typography), and Celebrating Our Volunteers appreciation banner (13pt).
 - **Fast & Modern**: Built on .NET 9, `HtmlAgilityPack`, `QuestPDF`, and `ScottPlot`.
 
 ---

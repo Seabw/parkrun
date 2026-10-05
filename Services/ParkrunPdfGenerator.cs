@@ -21,7 +21,8 @@ public class ParkrunPdfGenerator
         List<ParkrunRecord> records,
         string outputPath,
         byte[]? trendChartBytes = null,
-        List<ParkrunVolunteerProfile>? volunteerProfiles = null)
+        List<ParkrunVolunteerProfile>? volunteerProfiles = null,
+        List<ParkrunMilestone>? milestones = null)
     {
         string fullPath = ParkrunScraperService.ResolvePath(outputPath);
         string? directory = Path.GetDirectoryName(fullPath);
@@ -120,29 +121,100 @@ public class ParkrunPdfGenerator
                     column.Item().PaddingTop(1).LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
                 });
 
-                // Content (Members Table followed by Trends Graph at the end)
+                // Content (Milestones Section at the top, then Members Table, followed by Trends Graph & Volunteers)
                 page.Content().PaddingTop(5).Column(col =>
                 {
+                    // =========================================================================
+                    // Weekly Milestones Section (Top of Report)
+                    // =========================================================================
+                    if (milestones != null && milestones.Count > 0)
+                    {
+                        col.Item().PaddingBottom(7).Column(mCol =>
+                        {
+                            // Section Header
+                            mCol.Item().Row(mr =>
+                            {
+                                mr.RelativeItem().Text(t =>
+                                {
+                                    t.Span("🎉 ").FontSize(12f);
+                                    t.Span("Club Milestones This Week: ").FontSize(11.5f).Bold().FontColor(Colors.Amber.Darken4);
+                                    t.Span($"Celebrating {milestones.Count} Birmingham Swifts milestone achievement{(milestones.Count > 1 ? "s" : "")} this weekend!").FontSize(9f).FontColor(Colors.Grey.Darken2);
+                                });
+                            });
+
+                            // Milestone Cards Row
+                            mCol.Item().PaddingTop(3).Row(cardsRow =>
+                            {
+                                cardsRow.Spacing(6);
+
+                                foreach (var m in milestones)
+                                {
+                                    cardsRow.RelativeItem().Background(Colors.Amber.Lighten5)
+                                        .Border(1).BorderColor(Colors.Amber.Lighten3)
+                                        .PaddingVertical(4).PaddingHorizontal(6)
+                                        .Column(card =>
+                                        {
+                                            // Top row in card: Runner Name + Milestone Badge
+                                            card.Item().Row(topRow =>
+                                            {
+                                                if (!string.IsNullOrEmpty(m.ProfileUrl))
+                                                {
+                                                    topRow.RelativeItem().Hyperlink(m.ProfileUrl)
+                                                        .Text(m.ParkrunnerName).FontSize(11.5f).Bold().FontColor(Colors.Indigo.Darken4);
+                                                }
+                                                else
+                                                {
+                                                    topRow.RelativeItem().Text(m.ParkrunnerName).FontSize(11.5f).Bold();
+                                                }
+
+                                                topRow.AutoItem().Background(m.BadgeBgColor).PaddingHorizontal(5).PaddingVertical(1.5f)
+                                                    .Text(m.MilestoneTitle).FontSize(9f).Bold().FontColor(m.BadgeTextColor);
+                                            });
+
+                                            // Sub-row: Event, Time, Achievement (uses Text for smooth wrapping)
+                                            card.Item().PaddingTop(2).Text(detailText =>
+                                            {
+                                                string cleanEvent = m.EventName.Replace(" parkrun", "", StringComparison.OrdinalIgnoreCase).Trim();
+                                                detailText.Span(cleanEvent).FontSize(8.5f).FontColor(Colors.Grey.Darken3);
+
+                                                if (!string.IsNullOrEmpty(m.FinishTime))
+                                                {
+                                                    detailText.Span(" • ").FontSize(8f).FontColor(Colors.Grey.Medium);
+                                                    detailText.Span(m.FinishTime).FontSize(8.5f).SemiBold().FontColor(Colors.Indigo.Darken3);
+                                                }
+
+                                                if (!string.IsNullOrEmpty(m.Achievement))
+                                                {
+                                                    detailText.Span(" • ").FontSize(8f).FontColor(Colors.Grey.Medium);
+                                                    detailText.Span($" {m.Achievement} ").FontSize(7.5f).Bold().FontColor(Colors.Green.Darken4).BackgroundColor(Colors.Green.Lighten4);
+                                                }
+                                            });
+                                        });
+                                }
+                            });
+                        });
+                    }
+
                     // Table
                     col.Item().Table(table =>
                     {
                         table.ColumnsDefinition(columns =>
                         {
-                            columns.RelativeColumn(5.0f); // Event Name
-                            columns.ConstantColumn(42);   // Pos
-                            columns.RelativeColumn(4.0f); // Runner Name
-                            columns.ConstantColumn(72);   // Time
-                            columns.ConstantColumn(70);   // Finishers
+                            columns.RelativeColumn(5.4f); // Event Name (with First Timer badge)
+                            columns.ConstantColumn(30);   // Pos
+                            columns.RelativeColumn(4.6f); // Runner Name (with Milestone & PB badges)
+                            columns.ConstantColumn(58);   // Time
+                            columns.ConstantColumn(56);   // Finishers
                         });
 
                         // Table Header
                         table.Header(header =>
                         {
-                            header.Cell().Background(Colors.Indigo.Darken3).PaddingVertical(3).PaddingHorizontal(3).Text("Event Name").Bold().FontColor(Colors.White).FontSize(13f);
-                            header.Cell().Background(Colors.Indigo.Darken3).PaddingVertical(3).PaddingHorizontal(2).AlignCenter().Text("Pos").Bold().FontColor(Colors.White).FontSize(13f);
-                            header.Cell().Background(Colors.Indigo.Darken3).PaddingVertical(3).PaddingHorizontal(3).Text("Parkrunner").Bold().FontColor(Colors.White).FontSize(13f);
-                            header.Cell().Background(Colors.Indigo.Darken3).PaddingVertical(3).PaddingHorizontal(2).AlignCenter().Text("Time").Bold().FontColor(Colors.White).FontSize(13f);
-                            header.Cell().Background(Colors.Indigo.Darken3).PaddingVertical(3).PaddingHorizontal(2).AlignCenter().Text("Finishers").Bold().FontColor(Colors.White).FontSize(13f);
+                            header.Cell().Background(Colors.Indigo.Darken3).PaddingVertical(3).PaddingHorizontal(3).Text("Event Name").Bold().FontColor(Colors.White).FontSize(12.5f);
+                            header.Cell().Background(Colors.Indigo.Darken3).PaddingVertical(3).PaddingHorizontal(2).AlignCenter().Text("Pos").Bold().FontColor(Colors.White).FontSize(12.5f);
+                            header.Cell().Background(Colors.Indigo.Darken3).PaddingVertical(3).PaddingHorizontal(3).Text("Parkrunner").Bold().FontColor(Colors.White).FontSize(12.5f);
+                            header.Cell().Background(Colors.Indigo.Darken3).PaddingVertical(3).PaddingHorizontal(2).AlignCenter().Text("Time").Bold().FontColor(Colors.White).FontSize(12.5f);
+                            header.Cell().Background(Colors.Indigo.Darken3).PaddingVertical(3).PaddingHorizontal(2).AlignCenter().Text("Finishers").Bold().FontColor(Colors.White).FontSize(12.5f);
                         });
 
                         // Table Rows
@@ -151,16 +223,66 @@ public class ParkrunPdfGenerator
                             var r = records[i];
                             string bgColor = (i % 2 == 0) ? Colors.White : Colors.Grey.Lighten4;
 
-                            table.Cell().Background(bgColor).PaddingVertical(1.2f).PaddingHorizontal(3).Text(r.EventName).FontSize(11.5f);
-                            table.Cell().Background(bgColor).PaddingVertical(1.2f).PaddingHorizontal(2).AlignCenter().Text(r.OverallPosition).FontSize(13f).Bold();
-
-                            if (!string.IsNullOrEmpty(r.ProfileUrl))
+                            // Event Name Cell (with First Timer badge if attending for the first time)
+                            var eventCell = table.Cell().Background(bgColor).PaddingVertical(1.2f).PaddingHorizontal(3);
+                            if (r.IsFirstTimer)
                             {
-                                table.Cell().Background(bgColor).PaddingVertical(1.2f).PaddingHorizontal(3).Hyperlink(r.ProfileUrl).Text(r.Parkrunner).FontSize(13f).SemiBold().FontColor(Colors.Indigo.Darken4);
+                                eventCell.Row(eRow =>
+                                {
+                                    eRow.Spacing(3);
+                                    eRow.RelativeItem().AlignMiddle().Text(r.EventName).FontSize(11f);
+                                    eRow.AutoItem().AlignMiddle().Background(Colors.Teal.Lighten5).Border(0.8f).BorderColor(Colors.Teal.Darken1).PaddingHorizontal(3f).PaddingVertical(1).Text("First Timer").FontSize(7f).Bold().FontColor(Colors.Teal.Darken3);
+                                });
                             }
                             else
                             {
-                                table.Cell().Background(bgColor).PaddingVertical(1.2f).PaddingHorizontal(3).Text(r.Parkrunner).FontSize(13f).SemiBold();
+                                eventCell.Text(r.EventName).FontSize(11f);
+                            }
+
+                            table.Cell().Background(bgColor).PaddingVertical(1.2f).PaddingHorizontal(2).AlignCenter().Text(r.OverallPosition).FontSize(13f).Bold();
+
+                            // Runner Name Cell (with Milestone and PB tags)
+                            var runnerCell = table.Cell().Background(bgColor).PaddingVertical(1.2f).PaddingHorizontal(3);
+                            bool hasMilestone = !string.IsNullOrEmpty(r.Milestone);
+                            bool hasPb = r.IsPb;
+
+                            if (!hasMilestone && !hasPb)
+                            {
+                                if (!string.IsNullOrEmpty(r.ProfileUrl))
+                                {
+                                    runnerCell.Hyperlink(r.ProfileUrl).Text(r.Parkrunner).FontSize(12.5f).SemiBold().FontColor(Colors.Indigo.Darken4);
+                                }
+                                else
+                                {
+                                    runnerCell.Text(r.Parkrunner).FontSize(12.5f).SemiBold();
+                                }
+                            }
+                            else
+                            {
+                                runnerCell.Row(rRow =>
+                                {
+                                    rRow.Spacing(2.5f);
+                                    if (!string.IsNullOrEmpty(r.ProfileUrl))
+                                    {
+                                        rRow.RelativeItem().AlignMiddle().Hyperlink(r.ProfileUrl).Text(r.Parkrunner).FontSize(12.5f).SemiBold().FontColor(Colors.Indigo.Darken4);
+                                    }
+                                    else
+                                    {
+                                        rRow.RelativeItem().AlignMiddle().Text(r.Parkrunner).FontSize(12.5f).SemiBold();
+                                    }
+
+                                    if (hasMilestone)
+                                    {
+                                        string badgeBg = !string.IsNullOrEmpty(r.MilestoneBadgeBg) ? r.MilestoneBadgeBg : Colors.Purple.Darken2;
+                                        string badgeText = !string.IsNullOrEmpty(r.MilestoneBadgeText) ? r.MilestoneBadgeText : Colors.White;
+                                        rRow.AutoItem().AlignMiddle().Background(badgeBg).PaddingHorizontal(3f).PaddingVertical(1).Text(r.Milestone).FontSize(8f).Bold().FontColor(badgeText);
+                                    }
+
+                                    if (hasPb)
+                                    {
+                                        rRow.AutoItem().AlignMiddle().Background(Colors.Green.Darken2).PaddingHorizontal(3f).PaddingVertical(1).Text("PB").FontSize(8f).Bold().FontColor(Colors.White);
+                                    }
+                                });
                             }
 
                             table.Cell().Background(bgColor).PaddingVertical(1.2f).PaddingHorizontal(2).AlignCenter().Text(r.Time).FontSize(13f).Bold().FontColor(Colors.Indigo.Darken2);
@@ -204,17 +326,17 @@ public class ParkrunPdfGenerator
                     }
 
                     // =========================================================================
-                    // Volunteering Section (ONLY members who volunteered this specific week)
+                    // Volunteering Section (always shown at the end of the report)
                     // =========================================================================
-                    if (volunteerProfiles != null && volunteerProfiles.Count > 0)
+                    col.Item().PaddingTop(8).Column(volCol =>
                     {
-                        int totalWeeklyVolunteers = volunteerProfiles.Count;
-                        int distinctEventsSupported = volunteerProfiles.Select(v => v.EventName).Where(e => !string.IsNullOrEmpty(e)).Distinct().Count();
-                        int totalVolCredits = volunteerProfiles.Sum(v => v.TotalCredits);
-                        int milestoneHolders = volunteerProfiles.Count(v => !string.IsNullOrEmpty(v.HighestMilestone) && v.HighestMilestone != "-");
-
-                        col.Item().ShowEntire().PaddingTop(8).Column(volCol =>
+                        if (volunteerProfiles != null && volunteerProfiles.Count > 0)
                         {
+                            int totalWeeklyVolunteers = volunteerProfiles.Count;
+                            int distinctEventsSupported = volunteerProfiles.Select(v => v.EventName).Where(e => !string.IsNullOrEmpty(e)).Distinct().Count();
+                            int totalVolCredits = volunteerProfiles.Sum(v => v.TotalCredits);
+                            int milestoneHolders = volunteerProfiles.Count(v => !string.IsNullOrEmpty(v.HighestMilestone) && v.HighestMilestone != "-");
+
                             // Section Header
                             volCol.Item().Row(vr =>
                             {
@@ -343,8 +465,46 @@ public class ParkrunPdfGenerator
                                     t.Span("Every parkrun event is 100% volunteer-led. Huge thanks to all Birmingham Swifts members who volunteered their time to support the running community this weekend! If you would like to help at an upcoming event, chat with our club team or sign up on your local parkrun roster.").FontSize(13f).FontColor(Colors.Purple.Darken4);
                                 });
                             });
-                        });
-                    }
+                        }
+                        else
+                        {
+                            // Always show volunteering section even when 0 active volunteers detected this specific week
+                            volCol.Item().Row(vr =>
+                            {
+                                vr.RelativeItem().Column(vc =>
+                                {
+                                    vc.Item().Row(r =>
+                                    {
+                                        r.Spacing(6);
+                                        r.AutoItem().Text("💜").FontSize(10.5f);
+                                        r.AutoItem().Text("Club Volunteers & Community Champions")
+                                            .FontSize(11f).Bold().FontColor(Colors.Purple.Darken3);
+                                    });
+                                    vc.Item().PaddingTop(1).Text($"Celebrating Birmingham Swifts members who volunteer and support the parkrun community ({eventDate}).")
+                                        .FontSize(8f).FontColor(Colors.Grey.Darken1);
+                                });
+                            });
+
+                            volCol.Item().PaddingTop(4).Background(Colors.Purple.Lighten5).Border(1).BorderColor(Colors.Purple.Lighten3).Padding(8).Row(banner =>
+                            {
+                                banner.Spacing(8);
+                                banner.AutoItem().Text("💜").FontSize(16);
+                                banner.RelativeItem().Column(bc =>
+                                {
+                                    bc.Item().Text(t =>
+                                    {
+                                        t.Span("Celebrating Our Volunteers: ").FontSize(12.5f).Bold().FontColor(Colors.Purple.Darken3);
+                                        t.Span("Every parkrun event is 100% volunteer-led! While no club members were registered on the volunteer rosters this weekend, huge thanks to all our regular volunteers and community champions who help keep parkrun happening.").FontSize(12f).FontColor(Colors.Purple.Darken4);
+                                    });
+                                    bc.Item().PaddingTop(3).Text(t =>
+                                    {
+                                        t.Span("Want to get involved? ").FontSize(11.5f).Bold().FontColor(Colors.Purple.Darken3);
+                                        t.Span("If you would like to volunteer at an upcoming event (as a marshal, barcode scanner, timekeeper, or tail walker), chat with our club team or sign up on your local parkrun roster.").FontSize(11.5f).FontColor(Colors.Purple.Darken4);
+                                    });
+                                });
+                            });
+                        }
+                    });
                 });
 
                 // Footer
