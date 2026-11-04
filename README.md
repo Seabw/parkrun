@@ -7,10 +7,11 @@ A C# .NET 9 console application that scrapes and extracts **Parkrun Consolidated
 ## Features
 
 - **Weekly Club Milestones Tracking**:
-  - Automatically identifies member running milestones (official 25, 50, 100, 250, 500, 1000 clubs, junior 10 club, and celebrated club milestones like 150th, 200th, 300th, etc.) and volunteer credit milestones.
+  - Automatically identifies member running and volunteering milestones across parkrun's full official milestone club tiers (`10` for juniors, `25`, `50`, `100`, `200`, `250`, `300`, `400`, `500`, `600`, `700`, `800`, `900`, `1000` for both Run/Walk and Volunteer clubs) using official parkrun badge colors.
   - Prominently showcases milestone achievers at the start of the report with celebratory cards highlighting their milestone tier, event, finish time, and PB badges.
   - Highlights milestone pills directly beside member names in the results table.
   - Persists all club milestone achievements historically in `data/milestones.json`.
+  - Includes an **Upcoming Club Milestones Watch** section at the end of the report tracking members within 5 runs or volunteer credits of their next official milestone club.
 - **Weekly Trend Tracking & Graphing**:
   - Automatically records historical weekly stats in `data/history.json`.
   - Dynamically renders an embedded multi-week participation and attendance trend chart using `ScottPlot` with ample vertical height (170pt) and generous top headroom to ensure all data labels are clear and never touch the top border.

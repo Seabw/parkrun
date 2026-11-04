@@ -118,7 +118,8 @@ public class ParkrunMilestoneService
                 string achievement = achMatch.Success ? achMatch.Groups[1].Value.Trim() : "";
 
                 bool isPb = achievement.Contains("PB", StringComparison.OrdinalIgnoreCase) ||
-                            rContent.Contains("Results-table-td--pb", StringComparison.OrdinalIgnoreCase);
+                            rContent.Contains("Results-table-td--pb", StringComparison.OrdinalIgnoreCase) ||
+                            runs == 1;
 
                 bool isFirstTimer = achievement.Contains("First Timer", StringComparison.OrdinalIgnoreCase);
 
@@ -216,58 +217,273 @@ public class ParkrunMilestoneService
         return milestones;
     }
 
+    public static readonly int[] OfficialAdultMilestoneTiers = { 25, 50, 100, 200, 250, 300, 400, 500, 600, 700, 800, 900, 1000 };
+
     public static (string Title, string Club, string BgColor, string TextColor)? EvaluateRunMilestone(int runCount, string ageGroup)
     {
         return runCount switch
         {
             10 when ageGroup.StartsWith("J", StringComparison.OrdinalIgnoreCase) =>
-                ("10th parkrun", "Junior 10 Club", "#424242", "#FFFFFF"),
+                ("10th parkrun", "Junior 10 Club", "#1D1D1B", "#FFFFFF"),
             25 =>
-                ("25th parkrun", "Club 25", "#7B1FA2", "#FFFFFF"), // Purple (Official 25 Club)
+                ("25th parkrun", "25 Club", "#6A5D9E", "#FFFFFF"),     // Official Purple
             50 =>
-                ("50th parkrun", "Club 50", "#C62828", "#FFFFFF"), // Red (Official 50 Club)
+                ("50th parkrun", "50 Club", "#C81D31", "#FFFFFF"),     // Official Red
             100 =>
-                ("100th parkrun", "Club 100", "#212121", "#FFFFFF"), // Black (Official 100 Club)
-            150 =>
-                ("150th parkrun", "150 Club", "#283593", "#FFFFFF"), // Deep Indigo
+                ("100th parkrun", "100 Club", "#1D1D1B", "#FFFFFF"),   // Official Black
             200 =>
-                ("200th parkrun", "200 Club", "#1A237E", "#FFFFFF"), // Deep Indigo / Amber
+                ("200th parkrun", "200 Club", "#4FA4D9", "#2B233D"),   // Official Sky Blue
             250 =>
-                ("250th parkrun", "Club 250", "#2E7D32", "#FFFFFF"), // Green (Official 250 Club)
+                ("250th parkrun", "250 Club", "#2C504A", "#FFFFFF"),   // Official Forest Green
             300 =>
-                ("300th parkrun", "300 Club", "#283593", "#FFFFFF"),
-            350 =>
-                ("350th parkrun", "350 Club", "#283593", "#FFFFFF"),
+                ("300th parkrun", "300 Club", "#E6612D", "#FFFFFF"),   // Official Burnt Orange
             400 =>
-                ("400th parkrun", "400 Club", "#283593", "#FFFFFF"),
-            450 =>
-                ("450th parkrun", "450 Club", "#283593", "#FFFFFF"),
+                ("400th parkrun", "400 Club", "#88002F", "#FFFFFF"),   // Official Burgundy
             500 =>
-                ("500th parkrun", "Club 500", "#1565C0", "#FFFFFF"), // Royal Blue (Official 500 Club)
+                ("500th parkrun", "500 Club", "#2E4DA7", "#FFFFFF"),   // Official Royal Blue
+            600 =>
+                ("600th parkrun", "600 Club", "#B1D600", "#2B233D"),   // Official Lime Green
+            700 =>
+                ("700th parkrun", "700 Club", "#252E5F", "#FFFFFF"),   // Official Dark Navy
+            800 =>
+                ("800th parkrun", "800 Club", "#7F217D", "#FFFFFF"),   // Official Plum/Magenta
+            900 =>
+                ("900th parkrun", "900 Club", "#5C8B30", "#FFFFFF"),   // Official Olive Green
             1000 =>
-                ("1000th parkrun", "Club 1000", "#F57F17", "#FFFFFF"), // Gold (Official 1000 Club)
+                ("1000th parkrun", "1000 Club", "#FFE049", "#1D1D1B"), // Official Gold
             _ => null
         };
     }
 
     public static bool IsVolunteerMilestone(int credits)
     {
-        return credits is 25 or 50 or 100 or 200 or 250 or 500 or 1000;
+        return credits is 25 or 50 or 100 or 200 or 250 or 300 or 400 or 500 or 600 or 700 or 800 or 900 or 1000;
     }
 
     public static (string Title, string Club, string BgColor, string TextColor)? EvaluateVolunteerMilestone(int credits)
     {
         return credits switch
         {
-            25 => ("25th Volunteer Credit", "V25 Club", "#7B1FA2", "#FFFFFF"),
-            50 => ("50th Volunteer Credit", "V50 Club", "#C62828", "#FFFFFF"),
-            100 => ("100th Volunteer Credit", "V100 Club", "#212121", "#FFFFFF"),
-            200 => ("200th Volunteer Credit", "V200 Club", "#1A237E", "#FFFFFF"),
-            250 => ("250th Volunteer Credit", "V250 Club", "#2E7D32", "#FFFFFF"),
-            500 => ("500th Volunteer Credit", "V500 Club", "#1565C0", "#FFFFFF"),
-            1000 => ("1000th Volunteer Credit", "V1000 Club", "#F57F17", "#FFFFFF"),
+            10 => ("10th Volunteer Credit", "V10 Club", "#231F20", "#FFFFFF"),
+            25 => ("25th Volunteer Credit", "V25 Club", "#6A5D9E", "#FFFFFF"),
+            50 => ("50th Volunteer Credit", "V50 Club", "#C81D31", "#FFFFFF"),
+            100 => ("100th Volunteer Credit", "V100 Club", "#1D1D1B", "#FFFFFF"),
+            200 => ("200th Volunteer Credit", "V200 Club", "#4FA4D9", "#2B233D"),
+            250 => ("250th Volunteer Credit", "V250 Club", "#2C504A", "#FFFFFF"),
+            300 => ("300th Volunteer Credit", "V300 Club", "#E6612D", "#FFFFFF"),
+            400 => ("400th Volunteer Credit", "V400 Club", "#88002F", "#FFFFFF"),
+            500 => ("500th Volunteer Credit", "V500 Club", "#2E4DA7", "#FFFFFF"),
+            600 => ("600th Volunteer Credit", "V600 Club", "#B1D600", "#2B233D"),
+            700 => ("700th Volunteer Credit", "V700 Club", "#252E5F", "#FFFFFF"),
+            800 => ("800th Volunteer Credit", "V800 Club", "#7F217D", "#FFFFFF"),
+            900 => ("900th Volunteer Credit", "V900 Club", "#5C8B30", "#FFFFFF"),
+            1000 => ("1000th Volunteer Credit", "V1000 Club", "#FFE049", "#1D1D1B"),
             _ => null
         };
+    }
+
+    public List<UpcomingMilestone> GetUpcomingMilestones(
+        List<ParkrunRecord> currentRecords,
+        string eventDate,
+        int maxRemaining = 5)
+    {
+        string dataDir = Path.Combine(Directory.GetCurrentDirectory(), "data");
+        var memberStats = new Dictionary<string, (string Name, int Runs, int Vols, string AgeGroup, string LastSeen)>();
+
+        if (Directory.Exists(dataDir))
+        {
+            var clubCaches = Directory.GetFiles(dataDir, "cache_21925_*.html")
+                .OrderBy(f => f)
+                .ToList();
+
+            foreach (var cpath in clubCaches)
+            {
+                var dateMatch = Regex.Match(Path.GetFileName(cpath), @"cache_21925_(\d{4}-\d{2}-\d{2})\.html");
+                if (!dateMatch.Success) continue;
+                string edate = dateMatch.Groups[1].Value;
+                if (string.Compare(edate, eventDate, StringComparison.Ordinal) > 0) continue;
+
+                string html = File.ReadAllText(cpath);
+                var linkMatches = Regex.Matches(html, @"parkrunner/(\d+)[^>]*>([^<]+)</a>", RegexOptions.IgnoreCase);
+                foreach (Match m in linkMatches)
+                {
+                    string pid = m.Groups[1].Value.Trim();
+                    string name = HtmlEntity.DeEntitize(m.Groups[2].Value).Trim();
+                    if (!memberStats.TryGetValue(pid, out var cur))
+                    {
+                        memberStats[pid] = (name, 0, 0, "", edate);
+                    }
+                    else
+                    {
+                        memberStats[pid] = (name, cur.Runs, cur.Vols, cur.AgeGroup, edate);
+                    }
+                }
+
+                string evDir = Path.Combine(dataDir, $"events_{edate}");
+                if (Directory.Exists(evDir))
+                {
+                    foreach (var efile in Directory.GetFiles(evDir, "*.html"))
+                    {
+                        string ehtml = File.ReadAllText(efile);
+                        var rowMatches = Regex.Matches(ehtml, @"<tr class=[\x27\x22]Results-table-row[\x27\x22](.*?)</tr>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                        foreach (Match row in rowMatches)
+                        {
+                            string rc = row.Groups[1].Value;
+                            var idm = Regex.Match(rc, @"parkrunner/(\d+)", RegexOptions.IgnoreCase);
+                            if (!idm.Success) continue;
+                            string pid = idm.Groups[1].Value.Trim();
+                            if (!memberStats.TryGetValue(pid, out var cur)) continue;
+
+                            var rm = Regex.Match(rc, @"data-runs=[\x27\x22](\d+)[\x27\x22]", RegexOptions.IgnoreCase);
+                            var vm = Regex.Match(rc, @"data-vols=[\x27\x22](\d+)[\x27\x22]", RegexOptions.IgnoreCase);
+                            var am = Regex.Match(rc, @"data-agegroup=[\x27\x22]([^\x27\x22]*)[\x27\x22]", RegexOptions.IgnoreCase);
+
+                            int runs = rm.Success && int.TryParse(rm.Groups[1].Value, out int rVal) ? rVal : 0;
+                            int vols = vm.Success && int.TryParse(vm.Groups[1].Value, out int vVal) ? vVal : 0;
+                            string age = am.Success ? am.Groups[1].Value.Trim() : cur.AgeGroup;
+
+                            if (runs >= cur.Runs)
+                            {
+                                memberStats[pid] = (cur.Name, runs, Math.Max(cur.Vols, vols), age, edate);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Also incorporate volunteer store credits
+            string volPath = Path.Combine(dataDir, "volunteers.json");
+            if (File.Exists(volPath))
+            {
+                try
+                {
+                    var vStore = JsonSerializer.Deserialize<VolunteerStore>(File.ReadAllText(volPath));
+                    if (vStore?.Profiles != null)
+                    {
+                        foreach (var kvp in vStore.Profiles)
+                        {
+                            string pid = kvp.Key;
+                            var vp = kvp.Value;
+                            if (memberStats.TryGetValue(pid, out var cur))
+                            {
+                                memberStats[pid] = (cur.Name, cur.Runs, Math.Max(cur.Vols, vp.TotalCredits), cur.AgeGroup, cur.LastSeen);
+                            }
+                            else if (!string.IsNullOrEmpty(vp.ParkrunnerName))
+                            {
+                                memberStats[pid] = (vp.ParkrunnerName, 0, vp.TotalCredits, "", eventDate);
+                            }
+                        }
+                    }
+                }
+                catch { }
+            }
+        }
+
+        // Overlay currentRecords
+        foreach (var r in currentRecords)
+        {
+            if (string.IsNullOrEmpty(r.ParkrunnerId)) continue;
+            if (memberStats.TryGetValue(r.ParkrunnerId, out var cur))
+            {
+                memberStats[r.ParkrunnerId] = (
+                    r.Parkrunner,
+                    Math.Max(cur.Runs, r.TotalRuns),
+                    Math.Max(cur.Vols, r.TotalVols),
+                    !string.IsNullOrEmpty(r.AgeGroup) ? r.AgeGroup : cur.AgeGroup,
+                    eventDate
+                );
+            }
+            else
+            {
+                memberStats[r.ParkrunnerId] = (r.Parkrunner, r.TotalRuns, r.TotalVols, r.AgeGroup, eventDate);
+            }
+        }
+
+        var upcoming = new List<UpcomingMilestone>();
+
+        foreach (var kvp in memberStats)
+        {
+            string pid = kvp.Key;
+            var (name, runs, vols, ageGroup, lastSeen) = kvp.Value;
+            string profileUrl = $"https://www.parkrun.org.uk/parkrunner/{pid}/";
+
+            // Check upcoming Run milestones
+            if (runs > 0)
+            {
+                var runTiers = ageGroup.StartsWith("J", StringComparison.OrdinalIgnoreCase)
+                    ? new[] { 10 }.Concat(OfficialAdultMilestoneTiers)
+                    : OfficialAdultMilestoneTiers;
+
+                foreach (int target in runTiers)
+                {
+                    int diff = target - runs;
+                    if (diff >= 1 && diff <= maxRemaining)
+                    {
+                        var mInfo = EvaluateRunMilestone(target, ageGroup);
+                        if (mInfo != null)
+                        {
+                            upcoming.Add(new UpcomingMilestone
+                            {
+                                ParkrunnerName = name,
+                                ParkrunnerId = pid,
+                                MilestoneType = "Run",
+                                CurrentCount = runs,
+                                TargetMilestone = target,
+                                MilestoneTitle = mInfo.Value.Title,
+                                MilestoneClub = mInfo.Value.Club,
+                                BadgeBgColor = mInfo.Value.BgColor,
+                                BadgeTextColor = mInfo.Value.TextColor,
+                                LastSeenDate = lastSeen,
+                                ProfileUrl = profileUrl
+                            });
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // Check upcoming Volunteer milestones
+            if (vols > 0)
+            {
+                var volTiers = ageGroup.StartsWith("J", StringComparison.OrdinalIgnoreCase)
+                    ? new[] { 10 }.Concat(OfficialAdultMilestoneTiers)
+                    : OfficialAdultMilestoneTiers;
+
+                foreach (int target in volTiers)
+                {
+                    int diff = target - vols;
+                    if (diff >= 1 && diff <= maxRemaining)
+                    {
+                        var vInfo = EvaluateVolunteerMilestone(target);
+                        if (vInfo != null)
+                        {
+                            upcoming.Add(new UpcomingMilestone
+                            {
+                                ParkrunnerName = name,
+                                ParkrunnerId = pid,
+                                MilestoneType = "Volunteer",
+                                CurrentCount = vols,
+                                TargetMilestone = target,
+                                MilestoneTitle = vInfo.Value.Club,
+                                MilestoneClub = vInfo.Value.Club,
+                                BadgeBgColor = vInfo.Value.BgColor,
+                                BadgeTextColor = vInfo.Value.TextColor,
+                                LastSeenDate = lastSeen,
+                                ProfileUrl = profileUrl
+                            });
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        return upcoming
+            .OrderBy(u => u.MilestoneType == "Run" ? 0 : 1)
+            .ThenBy(u => u.Remaining)
+            .ThenByDescending(u => u.TargetMilestone)
+            .ThenBy(u => u.ParkrunnerName)
+            .ToList();
     }
 
     private void SaveToMilestonesStore(List<ParkrunMilestone> newMilestones)

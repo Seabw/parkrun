@@ -152,6 +152,9 @@ class Program
 
             Console.WriteLine($"Milestones Achieved This Week:   {milestones.Count} members reached a milestone\n");
 
+            var upcomingMilestones = milestoneService.GetUpcomingMilestones(records, effectiveDate);
+            Console.WriteLine($"Upcoming Milestones Watch:       {upcomingMilestones.Count} members within 5 runs/credits of a milestone\n");
+
             string destinationPdf;
             if (!string.IsNullOrEmpty(customOutput))
             {
@@ -173,8 +176,8 @@ class Program
                 }
             }
 
-            // Generate PDF Report with weekly milestones section, volunteers section and trend chart
-            ParkrunPdfGenerator.GeneratePdf(meta, records, destinationPdf, trendChartBytes, volunteerProfiles, milestones);
+            // Generate PDF Report with weekly milestones section, volunteers section, trend chart, and upcoming milestones
+            ParkrunPdfGenerator.GeneratePdf(meta, records, destinationPdf, trendChartBytes, volunteerProfiles, milestones, upcomingMilestones);
 
             if (milestones.Count > 0)
             {
@@ -246,6 +249,19 @@ class Program
                     Console.WriteLine($"{v.ParkrunnerName,-24} | {cleanEvent,-24} | {v.RoleThisWeek,-34} | {v.TotalCredits,-7} | {v.HighestMilestone,-9}");
                 }
                 Console.WriteLine(new string('-', 110));
+            }
+
+            if (upcomingMilestones.Count > 0)
+            {
+                Console.WriteLine($"\nUpcoming Club Milestones Watch (Within 5 Runs / Credits):");
+                Console.WriteLine(new string('-', 95));
+                Console.WriteLine($"{"Parkrunner",-26} | {"Type",-10} | {"Current",-8} | {"Target Club",-14} | {"To Go",-10} | {"Last Seen",-10}");
+                Console.WriteLine(new string('-', 95));
+                foreach (var u in upcomingMilestones)
+                {
+                    Console.WriteLine($"{u.ParkrunnerName,-26} | {u.MilestoneType,-10} | {u.CurrentCount,-8} | {u.MilestoneClub,-14} | {$"{u.Remaining} away",-10} | {u.LastSeenDate,-10}");
+                }
+                Console.WriteLine(new string('-', 95));
             }
 
             Console.WriteLine("\nExtraction completed successfully!");

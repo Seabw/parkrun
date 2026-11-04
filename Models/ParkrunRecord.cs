@@ -51,3 +51,19 @@ public class ParkrunMilestone
     public string ProfileUrl { get; set; } = string.Empty;
     public string EventDate { get; set; } = string.Empty;
 }
+
+public class UpcomingMilestone
+{
+    public string ParkrunnerName { get; set; } = string.Empty;
+    public string ParkrunnerId { get; set; } = string.Empty;
+    public string MilestoneType { get; set; } = "Run"; // "Run" or "Volunteer"
+    public int CurrentCount { get; set; }
+    public int TargetMilestone { get; set; }
+    public int Remaining => TargetMilestone - CurrentCount;
+    public string MilestoneTitle { get; set; } = string.Empty;
+    public string MilestoneClub { get; set; } = string.Empty;
+    public string BadgeBgColor { get; set; } = "#283593";
+    public string BadgeTextColor { get; set; } = "#FFFFFF";
+    public string LastSeenDate { get; set; } = string.Empty;
+    public string ProfileUrl { get; set; } = string.Empty;
+}

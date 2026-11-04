@@ -175,9 +175,15 @@ public class ParkrunVolunteerService
                 store.Profiles[pId] = profile;
             }
 
-            if (profile.TotalCredits == 0 && eventCredits > 0)
+            if (eventCredits > profile.TotalCredits)
             {
                 profile.TotalCredits = eventCredits;
+            }
+
+            string computedMilestone = GetHighestMilestoneFromCredits(profile.TotalCredits);
+            if (GetMilestoneWeight(computedMilestone) > GetMilestoneWeight(profile.HighestMilestone))
+            {
+                profile.HighestMilestone = computedMilestone;
             }
 
             profile.EventName = eventName;
@@ -403,13 +409,41 @@ public class ParkrunVolunteerService
         return profile;
     }
 
+    public static string GetHighestMilestoneFromCredits(int credits)
+    {
+        return credits switch
+        {
+            >= 1000 => "V1000",
+            >= 900 => "V900",
+            >= 800 => "V800",
+            >= 700 => "V700",
+            >= 600 => "V600",
+            >= 500 => "V500",
+            >= 400 => "V400",
+            >= 300 => "V300",
+            >= 250 => "V250",
+            >= 200 => "V200",
+            >= 100 => "V100",
+            >= 50 => "V50",
+            >= 25 => "V25",
+            _ => "-"
+        };
+    }
+
     private static int GetMilestoneWeight(string milestone)
     {
         return milestone.ToUpperInvariant() switch
         {
             "V1000" => 1000,
+            "V900" => 900,
+            "V800" => 800,
+            "V700" => 700,
+            "V600" => 600,
             "V500" => 500,
+            "V400" => 400,
+            "V300" => 300,
             "V250" => 250,
+            "V200" => 200,
             "V100" => 100,
             "V50" => 50,
             "V25" => 25,

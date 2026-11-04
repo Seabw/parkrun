@@ -330,7 +330,7 @@
     "1485565": {
       "ParkrunnerId": "1485565",
       "ParkrunnerName": "Aaron LLOYD-MCARTHUR",
-      "TotalCredits": 279,
+      "TotalCredits": 283,
       "HighestMilestone": "V250",
       "Milestones": [
         "V250"
@@ -342,7 +342,7 @@
       },
       "TopRolesSummary": "VI Guide (72), First Timers Welcome (50), Funnel Manager (33)",
       "EventName": "Bedworth parkrun",
-      "RoleThisWeek": "VI Guide",
+      "RoleThisWeek": "parkwalker",
       "VolunteeredThisWeek": true,
       "LastFetched": "2026-09-08T08:30:00Z",
       "DeltaCredits": 0
@@ -622,7 +622,7 @@
       },
       "TopRolesSummary": "Barcode Scanning (65), Volunteer Co-ordinator (42), Run Director (34)",
       "EventName": "Edgbaston Reservoir parkrun",
-      "RoleThisWeek": "Run Director, Token Sorting, Volunteer Co-ordinator, Results Processor, Event Day Course Check",
+      "RoleThisWeek": "Run Director, Token Sorting, Barcode Scanning, Results Processor, Event Day Course Check",
       "VolunteeredThisWeek": true,
       "LastFetched": "2026-09-08T08:30:00Z",
       "DeltaCredits": 0
@@ -642,7 +642,7 @@
       },
       "TopRolesSummary": "Timekeeper (11), Marshal (10), Barcode Scanning (8)",
       "EventName": "Edgbaston Reservoir parkrun",
-      "RoleThisWeek": "Marshal",
+      "RoleThisWeek": "Timekeeper, Pre-event Setup, Post-event Close Down",
       "VolunteeredThisWeek": true,
       "LastFetched": "2026-09-08T08:30:00Z",
       "DeltaCredits": 0
@@ -683,8 +683,8 @@
     "1846361": {
       "ParkrunnerId": "1846361",
       "ParkrunnerName": "Richard WILKES",
-      "TotalCredits": 316,
-      "HighestMilestone": "V250",
+      "TotalCredits": 320,
+      "HighestMilestone": "V300",
       "Milestones": [
         "V250"
       ],
@@ -694,17 +694,17 @@
         "Volunteer Co-ordinator": 66
       },
       "TopRolesSummary": "Run Director (88), Barcode Scanning (80), Volunteer Co-ordinator (66)",
-      "EventName": "Edgbaston Reservoir parkrun",
-      "RoleThisWeek": "First Timers Welcome, Barcode Scanning",
+      "EventName": "Cannon Hill parkrun, Birmingham",
+      "RoleThisWeek": "Communications Person, Volunteer Co-ordinator",
       "VolunteeredThisWeek": true,
       "LastFetched": "2026-09-08T08:30:00Z",
-      "DeltaCredits": 0
+      "DeltaCredits": 4
     },
     "2302494": {
       "ParkrunnerId": "2302494",
       "ParkrunnerName": "Scott BROUGH",
-      "TotalCredits": 211,
-      "HighestMilestone": "V100",
+      "TotalCredits": 213,
+      "HighestMilestone": "V200",
       "Milestones": [
         "V100"
       ],
@@ -816,6 +816,16 @@
     "2026-10-03": {},
     "2026-10-10": {
       "2302494": 211
+    },
+    "2026-10-17": {
+      "1846361": 316,
+      "131510": 187,
+      "4856576": 33
+    },
+    "2026-10-31": {
+      "1846361": 320,
+      "2302494": 213,
+      "1485565": 283
     }
   }
 }
