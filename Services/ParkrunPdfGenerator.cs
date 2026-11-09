@@ -143,56 +143,70 @@ public class ParkrunPdfGenerator
                                 });
                             });
 
-                            // Milestone Cards Row
-                            mCol.Item().PaddingTop(3).Row(cardsRow =>
+                            // Milestone Cards Grid (up to 3 per row for clean multi-card layout)
+                            int cardsPerRow = milestones.Count <= 2 ? milestones.Count : 3;
+                            float nameFontSize = milestones.Count > 2 ? 10f : 12f;
+                            float badgeFontSize = milestones.Count > 2 ? 8f : 9.5f;
+
+                            foreach (var rowChunk in milestones.Chunk(cardsPerRow))
                             {
-                                cardsRow.Spacing(6);
-
-                                foreach (var m in milestones)
+                                mCol.Item().PaddingTop(3).Row(cardsRow =>
                                 {
-                                    cardsRow.RelativeItem().Background(Colors.Pink.Lighten5)
-                                        .Border(1f).BorderColor(Colors.Pink.Lighten2)
-                                        .PaddingVertical(5).PaddingHorizontal(7)
-                                        .Column(card =>
-                                        {
-                                            // Top row in card: Runner Name + Milestone Badge
-                                            card.Item().Row(topRow =>
+                                    cardsRow.Spacing(6);
+
+                                    foreach (var m in rowChunk)
+                                    {
+                                        cardsRow.RelativeItem().Background(Colors.Pink.Lighten5)
+                                            .Border(1f).BorderColor(Colors.Pink.Lighten2)
+                                            .PaddingVertical(4).PaddingHorizontal(6)
+                                            .Column(card =>
                                             {
-                                                if (!string.IsNullOrEmpty(m.ProfileUrl))
+                                                // Top row in card: Runner Name + Milestone Badge
+                                                card.Item().Row(topRow =>
                                                 {
-                                                    topRow.RelativeItem().Hyperlink(m.ProfileUrl)
-                                                        .Text(m.ParkrunnerName).FontSize(12f).Bold().FontColor(Colors.Indigo.Darken4);
-                                                }
-                                                else
-                                                {
-                                                    topRow.RelativeItem().Text(m.ParkrunnerName).FontSize(12f).Bold().FontColor(Colors.Indigo.Darken4);
-                                                }
+                                                    topRow.Spacing(4);
+                                                    if (!string.IsNullOrEmpty(m.ProfileUrl))
+                                                    {
+                                                        topRow.RelativeItem().AlignMiddle().Hyperlink(m.ProfileUrl)
+                                                            .Text(m.ParkrunnerName).FontSize(nameFontSize).Bold().FontColor(Colors.Indigo.Darken4);
+                                                    }
+                                                    else
+                                                    {
+                                                        topRow.RelativeItem().AlignMiddle().Text(m.ParkrunnerName).FontSize(nameFontSize).Bold().FontColor(Colors.Indigo.Darken4);
+                                                    }
 
-                                                topRow.AutoItem().Background(m.BadgeBgColor).PaddingHorizontal(6).PaddingVertical(2f)
-                                                    .Text(m.MilestoneTitle).FontSize(9.5f).Bold().FontColor(m.BadgeTextColor);
+                                                    topRow.AutoItem().AlignMiddle().Background(m.BadgeBgColor).PaddingHorizontal(5).PaddingVertical(1.5f)
+                                                        .Text(m.MilestoneTitle).FontSize(badgeFontSize).Bold().FontColor(m.BadgeTextColor);
+                                                });
+
+                                                // Sub-row: Event, Time, Achievement (uses Text for smooth wrapping)
+                                                card.Item().PaddingTop(2).Text(detailText =>
+                                                {
+                                                    string cleanEvent = m.EventName.Replace(" parkrun", "", StringComparison.OrdinalIgnoreCase).Trim();
+                                                    detailText.Span(cleanEvent).FontSize(8.5f).FontColor(Colors.Grey.Darken3);
+
+                                                    if (!string.IsNullOrEmpty(m.FinishTime))
+                                                    {
+                                                        detailText.Span(" • ").FontSize(8f).FontColor(Colors.Grey.Medium);
+                                                        detailText.Span(m.FinishTime).FontSize(8.5f).SemiBold().FontColor(Colors.Indigo.Darken3);
+                                                    }
+
+                                                    if (!string.IsNullOrEmpty(m.Achievement))
+                                                    {
+                                                        detailText.Span(" • ").FontSize(8f).FontColor(Colors.Grey.Medium);
+                                                        detailText.Span($" {m.Achievement} ").FontSize(7.5f).Bold().FontColor(Colors.Green.Darken4).BackgroundColor(Colors.Green.Lighten4);
+                                                    }
+                                                });
                                             });
+                                    }
 
-                                            // Sub-row: Event, Time, Achievement (uses Text for smooth wrapping)
-                                            card.Item().PaddingTop(2).Text(detailText =>
-                                            {
-                                                string cleanEvent = m.EventName.Replace(" parkrun", "", StringComparison.OrdinalIgnoreCase).Trim();
-                                                detailText.Span(cleanEvent).FontSize(9f).FontColor(Colors.Grey.Darken3);
-
-                                                if (!string.IsNullOrEmpty(m.FinishTime))
-                                                {
-                                                    detailText.Span(" • ").FontSize(8.5f).FontColor(Colors.Grey.Medium);
-                                                    detailText.Span(m.FinishTime).FontSize(9f).SemiBold().FontColor(Colors.Indigo.Darken3);
-                                                }
-
-                                                if (!string.IsNullOrEmpty(m.Achievement))
-                                                {
-                                                    detailText.Span(" • ").FontSize(8.5f).FontColor(Colors.Grey.Medium);
-                                                    detailText.Span($" {m.Achievement} ").FontSize(7.5f).Bold().FontColor(Colors.Green.Darken4).BackgroundColor(Colors.Green.Lighten4);
-                                                }
-                                            });
-                                        });
-                                }
-                            });
+                                    // Fill empty slots if last row has fewer than cardsPerRow items
+                                    for (int pad = rowChunk.Length; pad < cardsPerRow; pad++)
+                                    {
+                                        cardsRow.RelativeItem();
+                                    }
+                                });
+                            }
                         });
                     }
 

@@ -130,6 +130,15 @@ public class ParkrunMilestoneService
         // 2. Enrich records & identify running milestones
         var milestones = new List<ParkrunMilestone>();
 
+        // Special Club Celebrations (e.g. C25K Graduation on 2026-11-07)
+        var c25kGraduates = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "5982675",  // John VINCENT-BOND
+            "12906742", // Neil SMITH
+            "12853086", // Andrey FJELDSTAD
+            "12850291"  // Andrea BOHN
+        };
+
         foreach (var record in records)
         {
             if (string.IsNullOrEmpty(record.ParkrunnerId)) continue;
@@ -144,6 +153,11 @@ public class ParkrunMilestoneService
                 record.IsFirstTimer = stats.IsFirstTimer;
 
                 var mInfo = EvaluateRunMilestone(record.TotalRuns, record.AgeGroup);
+                if (mInfo == null && eventDate == "2026-11-07" && c25kGraduates.Contains(record.ParkrunnerId))
+                {
+                    mInfo = ("C25K Graduation", "C25K Graduate", "#00796B", "#FFFFFF");
+                }
+
                 if (mInfo != null)
                 {
                     record.Milestone = mInfo.Value.Title;

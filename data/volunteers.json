@@ -330,7 +330,7 @@
     "1485565": {
       "ParkrunnerId": "1485565",
       "ParkrunnerName": "Aaron LLOYD-MCARTHUR",
-      "TotalCredits": 283,
+      "TotalCredits": 284,
       "HighestMilestone": "V250",
       "Milestones": [
         "V250"
@@ -345,7 +345,7 @@
       "RoleThisWeek": "parkwalker",
       "VolunteeredThisWeek": true,
       "LastFetched": "2026-09-08T08:30:00Z",
-      "DeltaCredits": 0
+      "DeltaCredits": 1
     },
     "1843872": {
       "ParkrunnerId": "1843872",
@@ -630,7 +630,7 @@
     "4856576": {
       "ParkrunnerId": "4856576",
       "ParkrunnerName": "Alexander BROWN",
-      "TotalCredits": 33,
+      "TotalCredits": 37,
       "HighestMilestone": "V25",
       "Milestones": [
         "V25"
@@ -642,7 +642,7 @@
       },
       "TopRolesSummary": "Timekeeper (11), Marshal (10), Barcode Scanning (8)",
       "EventName": "Edgbaston Reservoir parkrun",
-      "RoleThisWeek": "Timekeeper, Pre-event Setup, Post-event Close Down",
+      "RoleThisWeek": "Barcode Scanning",
       "VolunteeredThisWeek": true,
       "LastFetched": "2026-09-08T08:30:00Z",
       "DeltaCredits": 0
@@ -683,7 +683,7 @@
     "1846361": {
       "ParkrunnerId": "1846361",
       "ParkrunnerName": "Richard WILKES",
-      "TotalCredits": 320,
+      "TotalCredits": 321,
       "HighestMilestone": "V300",
       "Milestones": [
         "V250"
@@ -695,15 +695,15 @@
       },
       "TopRolesSummary": "Run Director (88), Barcode Scanning (80), Volunteer Co-ordinator (66)",
       "EventName": "Cannon Hill parkrun, Birmingham",
-      "RoleThisWeek": "Communications Person, Volunteer Co-ordinator",
+      "RoleThisWeek": "Communications Person, Event Day Course Check, Volunteer Co-ordinator",
       "VolunteeredThisWeek": true,
       "LastFetched": "2026-09-08T08:30:00Z",
-      "DeltaCredits": 4
+      "DeltaCredits": 1
     },
     "2302494": {
       "ParkrunnerId": "2302494",
       "ParkrunnerName": "Scott BROUGH",
-      "TotalCredits": 213,
+      "TotalCredits": 214,
       "HighestMilestone": "V200",
       "Milestones": [
         "V100"
@@ -718,7 +718,7 @@
       "RoleThisWeek": "Marshal",
       "VolunteeredThisWeek": true,
       "LastFetched": "2026-09-08T08:30:00Z",
-      "DeltaCredits": 0
+      "DeltaCredits": 1
     },
     "4722916": {
       "ParkrunnerId": "4722916",
@@ -753,6 +753,24 @@
       "RoleThisWeek": "Tail Walker",
       "VolunteeredThisWeek": true,
       "LastFetched": "2026-09-13T06:02:23.835702Z",
+      "DeltaCredits": 0
+    },
+    "9019044": {
+      "ParkrunnerId": "9019044",
+      "ParkrunnerName": "Bo WANG",
+      "TotalCredits": 11,
+      "HighestMilestone": "-",
+      "Milestones": [],
+      "Roles": {
+        "Marshal": 9,
+        "Funnel Manager": 1,
+        "Pacer (5k only)": 1
+      },
+      "TopRolesSummary": "Marshal (9), Funnel Manager (1), Pacer (5k only) (1)",
+      "EventName": "Cannon Hill parkrun, Birmingham",
+      "RoleThisWeek": "Marshal",
+      "VolunteeredThisWeek": true,
+      "LastFetched": "2026-11-08T17:08:37.313062Z",
       "DeltaCredits": 0
     }
   },
@@ -826,6 +844,13 @@
       "1846361": 320,
       "2302494": 213,
       "1485565": 283
+    },
+    "2026-11-07": {
+      "4856576": 37,
+      "1485565": 284,
+      "1846361": 321,
+      "2302494": 214,
+      "9019044": 11
     }
   }
 }
